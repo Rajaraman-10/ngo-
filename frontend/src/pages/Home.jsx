@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../api/client";
 import FlowDiagram from "../components/FlowDiagram";
+import ImpactSlider from "../components/ImpactSlider";
 import Media from "../components/Media";
 import { FOCUS_AREAS, focusAreaLabel } from "../constants/focusAreas";
 import { formatDate, formatINR } from "../utils/format";
@@ -566,6 +567,7 @@ export default function Home() {
   return (
     <div>
       <Hero />
+      <ImpactSlider />
       <AboutUs />
       <MissionPillars />
       <Philosophy />
