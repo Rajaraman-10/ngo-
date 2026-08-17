@@ -5,6 +5,7 @@ Django settings for the NGO transparency platform.
 from datetime import timedelta
 from pathlib import Path
 
+import dj_database_url
 import environ
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -70,8 +71,12 @@ WSGI_APPLICATION = "config.wsgi.application"
 AUTH_USER_MODEL = "accounts.User"
 
 # Database
-# Defaults to SQLite for local dev. Set USE_MYSQL=true (with the DB_* vars) to use MySQL.
-if env.bool("USE_MYSQL", default=False):
+# Priority: DATABASE_URL (Render's Postgres, or any other managed DB) > USE_MYSQL
+# (self-hosted MySQL via DB_* vars) > SQLite for local dev with neither set.
+DATABASE_URL = env("DATABASE_URL", default="")
+if DATABASE_URL:
+    DATABASES = {"default": dj_database_url.parse(DATABASE_URL, conn_max_age=600)}
+elif env.bool("USE_MYSQL", default=False):
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.mysql",
