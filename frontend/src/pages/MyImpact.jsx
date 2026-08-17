@@ -1,10 +1,14 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../api/client";
+import { useAuth } from "../context/AuthContext";
 import { formatINR } from "../utils/format";
 import { getSavedTransactionIds, removeTransactionId, saveTransactionId } from "../utils/myImpact";
 
 export default function MyImpact() {
+  const { user } = useAuth();
+  const isDonor = user?.role === "donor";
+
   const [contributions, setContributions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [newId, setNewId] = useState("");
@@ -13,22 +17,34 @@ export default function MyImpact() {
   async function refresh() {
     setLoading(true);
     setError("");
-    const ids = getSavedTransactionIds();
-    const results = await Promise.all(
-      ids.map((id) =>
+
+    let accountDonations = [];
+    if (isDonor) {
+      accountDonations = await api
+        .get("/finance/my-donations/")
+        .then((res) => res.data)
+        .catch(() => []);
+    }
+
+    const accountIds = new Set(accountDonations.map((d) => d.transaction_id));
+    const savedIds = getSavedTransactionIds().filter((id) => !accountIds.has(id));
+    const guestDonations = await Promise.all(
+      savedIds.map((id) =>
         api
           .get(`/finance/verify/${encodeURIComponent(id)}/`)
           .then((res) => res.data)
           .catch(() => null)
       )
     );
-    setContributions(results.filter((r) => r && r.found && r.type === "donation"));
+
+    setContributions([...accountDonations, ...guestDonations.filter((r) => r && r.found && r.type === "donation")]);
     setLoading(false);
   }
 
   useEffect(() => {
     refresh();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isDonor]);
 
   function handleAdd(e) {
     e.preventDefault();
@@ -60,9 +76,15 @@ export default function MyImpact() {
     <div className="container">
       <h1>My Impact</h1>
       <p style={{ color: "var(--text-secondary)" }}>
-        Contributions you've saved from the Track Your Contribution page, kept only in this
-        browser — nothing is tied to an account.
+        {isDonor
+          ? "Every donation linked to your account, automatically — plus anything you've manually tracked below."
+          : "Contributions you've saved from the Track Your Contribution page, kept only in this browser — nothing is tied to an account."}
       </p>
+      {!isDonor && (
+        <p style={{ color: "var(--text-muted)", fontSize: "0.85rem" }}>
+          <Link to="/register">Create a donor account</Link> to have future donations tracked here automatically.
+        </p>
+      )}
 
       <form onSubmit={handleAdd} className="card">
         <div className="form-grid">
@@ -124,7 +146,9 @@ export default function MyImpact() {
       ) : (
         <div className="card">
           <p style={{ color: "var(--text-muted)" }}>
-            You haven't tracked any contributions yet. Look up a donation on the{" "}
+            {isDonor
+              ? "No donations linked to your account yet — donate on the "
+              : "You haven't tracked any contributions yet. Look up a donation on the "}
             <Link to="/verify">Track Your Contribution</Link> page and save it here.
           </p>
         </div>

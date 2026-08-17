@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../api/client";
 import FlowDiagram from "../components/FlowDiagram";
+import Media from "../components/Media";
 import { FOCUS_AREAS, focusAreaLabel } from "../constants/focusAreas";
 import { formatDate, formatINR } from "../utils/format";
 
@@ -23,9 +24,9 @@ function Hero() {
         <a href="#mission" className="btn">
           Our Mission
         </a>
-        <a href="#donate" className="btn secondary">
+        <Link to="/donate" className="btn secondary">
           Donate Now
-        </a>
+        </Link>
       </div>
       <ul className="trust-indicators">
         <li>✓ Transparent Funds</li>
@@ -58,7 +59,7 @@ function MissionPillars() {
       <h2>Five Foundations for a Better Life</h2>
       <div className="pillar-grid">
         {FOCUS_AREAS.map((f) => (
-          <Link to={`/projects?focus=${f.key}`} className="pillar-card" key={f.key}>
+          <Link to={`/mission/${f.key}`} className="pillar-card" key={f.key}>
             <div className="pillar-icon" style={{ background: f.color }}>
               {f.icon}
             </div>
@@ -241,6 +242,7 @@ function ProjectsPreview({ projects }) {
               Target {formatINR(p.target_budget)} · Received {formatINR(p.funds_received)} · Spent{" "}
               {formatINR(p.funds_spent)} · {pct.toFixed(0)}%
             </p>
+            <Link to={`/projects/${p.slug}`}>View Project →</Link>
           </div>
         );
       })}
@@ -279,20 +281,68 @@ function ImpactStats({ summary, projects }) {
           </div>
         ))}
       </div>
+      <Link to="/impact" className="btn secondary">
+        View Impact Dashboard
+      </Link>
     </section>
   );
 }
 
-function Stories() {
+function RecentImpactUpdates({ updates }) {
+  const recent = updates.slice(0, 3);
+  return (
+    <section className="container">
+      <h2>Recent Impact Updates</h2>
+      {!recent.length && (
+        <div className="card">
+          <p style={{ color: "var(--text-muted)" }}>No impact updates published yet.</p>
+        </div>
+      )}
+      {recent.map((u) => (
+        <div className="card" key={u.id}>
+          <Media src={u.photo} alt={u.title} />
+          <h3>{u.title}</h3>
+          <p style={{ color: "var(--text-muted)", fontSize: "0.82rem" }}>
+            {formatDate(u.date)} · {u.project_name}
+          </p>
+          <p style={{ color: "var(--text-secondary)" }}>{u.description}</p>
+          {u.people_impacted > 0 && (
+            <p style={{ color: "var(--text-muted)", fontSize: "0.85rem" }}>{u.people_impacted} people impacted</p>
+          )}
+        </div>
+      ))}
+      <Link to="/impact-updates" className="btn secondary">
+        View All Updates
+      </Link>
+    </section>
+  );
+}
+
+function Stories({ stories }) {
+  const recent = stories.slice(0, 2);
   return (
     <section className="container">
       <h2>Stories of Change</h2>
-      <div className="card">
-        <p style={{ color: "var(--text-muted)" }}>
-          We haven't published any beneficiary stories yet — real stories are shared here only
-          with the person's consent. Check back as our programs grow.
-        </p>
-      </div>
+      {!recent.length && (
+        <div className="card">
+          <p style={{ color: "var(--text-muted)" }}>
+            We haven't published any beneficiary stories yet — real stories are shared here only
+            with the person's consent. Check back as our programs grow.
+          </p>
+        </div>
+      )}
+      {recent.map((s) => (
+        <div className="card" key={s.id}>
+          <Media src={s.photo} alt={s.title} placeholder="Photo shared with consent, not yet added" />
+          <h3>{s.title}</h3>
+          <p style={{ color: "var(--text-secondary)" }}>{s.current_situation}</p>
+        </div>
+      ))}
+      {recent.length > 0 && (
+        <Link to="/stories" className="btn secondary">
+          Read More Stories
+        </Link>
+      )}
     </section>
   );
 }
@@ -373,26 +423,26 @@ function DocumentsPreview({ documents }) {
   );
 }
 
-function GetInvolved() {
+function GetInvolvedTeaser() {
   const options = [
-    { icon: "❤️", title: "Donate", desc: "Support our programs.", href: "#donate" },
-    { icon: "🤝", title: "Volunteer", desc: "Give your time and skills.", href: "#contact" },
-    { icon: "💼", title: "Create Opportunities", desc: "Help us connect people with jobs.", href: "#contact" },
-    { icon: "🏫", title: "Partner With Us", desc: "Schools, companies and organizations can collaborate.", href: "#contact" },
-    { icon: "📢", title: "Spread Awareness", desc: "Share our mission.", href: "#contact" },
+    { icon: "❤️", title: "Donate", desc: "Support our programs.", to: "/donate" },
+    { icon: "🤝", title: "Volunteer", desc: "Give your time and skills.", to: "/get-involved" },
+    { icon: "💼", title: "Create Opportunities", desc: "Help us connect people with jobs.", to: "/get-involved" },
+    { icon: "🏫", title: "Partner With Us", desc: "Schools, companies and organizations can collaborate.", to: "/get-involved" },
+    { icon: "📢", title: "Spread Awareness", desc: "Share our mission.", to: "/get-involved" },
   ];
   return (
     <section className="container" id="get-involved">
       <h2>You Can Make a Difference</h2>
       <div className="pillar-grid">
         {options.map((o) => (
-          <a href={o.href} className="pillar-card" key={o.title}>
+          <Link to={o.to} className="pillar-card" key={o.title}>
             <div className="pillar-icon" style={{ background: "var(--series-1)" }}>
               {o.icon}
             </div>
             <h3>{o.title}</h3>
             <p className="pillar-description">{o.desc}</p>
-          </a>
+          </Link>
         ))}
       </div>
     </section>
@@ -408,13 +458,9 @@ function DonateCTA() {
           Your contribution can become a child's education, a family's meal, a person's
           opportunity, or a family's safe home.
         </p>
-        <p style={{ color: "var(--text-muted)", fontSize: "0.85rem", marginBottom: 16 }}>
-          Online donations aren't wired up on this scaffold yet — reach us at the contact details
-          below to donate today.
-        </p>
-        <a href="#contact" className="btn">
+        <Link to="/donate" className="btn">
           Donate Now
-        </a>
+        </Link>
         <p style={{ marginTop: 12, color: "var(--success-text)", fontWeight: 600, fontSize: "0.85rem" }}>
           100% Transparent Financial Records
         </p>
@@ -427,10 +473,15 @@ function Newsletter() {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-    setMessage("Thanks for your interest — email signup isn't wired up on this scaffold yet.");
-    setEmail("");
+    try {
+      await api.post("/core/newsletter/", { email });
+      setMessage("Thanks — you're subscribed.");
+      setEmail("");
+    } catch (err) {
+      setMessage(err.response?.data?.email?.[0] || "Could not subscribe — try again.");
+    }
   }
 
   return (
@@ -455,59 +506,17 @@ function Newsletter() {
   );
 }
 
-function Contact() {
-  const [message, setMessage] = useState("");
-
-  function handleSubmit(e) {
-    e.preventDefault();
-    setMessage("Thanks for reaching out — this form isn't wired up on this scaffold yet.");
-  }
-
+function ContactTeaser() {
   return (
     <section className="container" id="contact">
-      <h2>Let's Create Change Together</h2>
-      <div className="contact-grid">
-        <div className="card">
-          <p>
-            <strong>Address</strong>
-            <br />
-            123 Example Street, Chennai, Tamil Nadu, India
-          </p>
-          <p>
-            <strong>Phone</strong>
-            <br />
-            +91 00000 00000
-          </p>
-          <p>
-            <strong>Email</strong>
-            <br />
-            contact@ashafoundation.org
-          </p>
-          <div className="social-row">
-            <span>Instagram</span>
-            <span>Facebook</span>
-            <span>LinkedIn</span>
-            <span>YouTube</span>
-          </div>
-        </div>
-        <form className="card" onSubmit={handleSubmit}>
-          <div className="field" style={{ marginBottom: 12 }}>
-            <label>Name</label>
-            <input required />
-          </div>
-          <div className="field" style={{ marginBottom: 12 }}>
-            <label>Email</label>
-            <input type="email" required />
-          </div>
-          <div className="field" style={{ marginBottom: 12 }}>
-            <label>Message</label>
-            <textarea rows={3} required />
-          </div>
-          <button className="btn" type="submit">
-            Send Message
-          </button>
-          {message && <p style={{ color: "var(--text-muted)", fontSize: "0.85rem", marginTop: 10 }}>{message}</p>}
-        </form>
+      <div className="card" style={{ textAlign: "center" }}>
+        <h2>Let's Create Change Together</h2>
+        <p style={{ color: "var(--text-secondary)" }}>
+          Questions, partnership ideas, or press inquiries — we'd love to hear from you.
+        </p>
+        <Link to="/contact" className="btn">
+          Contact Us
+        </Link>
       </div>
     </section>
   );
@@ -518,11 +527,15 @@ export default function Home() {
   const [projects, setProjects] = useState([]);
   const [transactions, setTransactions] = useState([]);
   const [documents, setDocuments] = useState([]);
+  const [updates, setUpdates] = useState([]);
+  const [stories, setStories] = useState([]);
 
   useEffect(() => {
     api.get("/finance/summary/").then((res) => setSummary(res.data));
     api.get("/core/projects/").then((res) => setProjects(res.data.results || res.data));
     api.get("/documents/documents/").then((res) => setDocuments(res.data.results || res.data));
+    api.get("/core/impact-updates/").then((res) => setUpdates(res.data.results || res.data));
+    api.get("/core/stories/").then((res) => setStories(res.data.results || res.data));
 
     Promise.all([api.get("/finance/donations/"), api.get("/finance/expenses/")]).then(
       ([donationsRes, expensesRes]) => {
@@ -561,14 +574,15 @@ export default function Home() {
       <DonationJourney />
       <ProjectsPreview projects={projects} />
       <ImpactStats summary={summary} projects={projects} />
-      <Stories />
+      <RecentImpactUpdates updates={updates} />
+      <Stories stories={stories} />
       <Gallery />
       <Accountability />
       <DocumentsPreview documents={documents} />
-      <GetInvolved />
+      <GetInvolvedTeaser />
       <DonateCTA />
       <Newsletter />
-      <Contact />
+      <ContactTeaser />
     </div>
   );
 }

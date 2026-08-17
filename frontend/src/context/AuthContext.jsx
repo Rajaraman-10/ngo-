@@ -11,14 +11,16 @@ export function AuthProvider({ children }) {
     if (!isAuthenticated()) {
       setUser(null);
       setLoading(false);
-      return;
+      return null;
     }
     try {
       const { data } = await api.get("/accounts/users/me/");
       setUser(data);
+      return data;
     } catch {
       apiLogout();
       setUser(null);
+      return null;
     } finally {
       setLoading(false);
     }
@@ -30,7 +32,7 @@ export function AuthProvider({ children }) {
 
   async function login(username, password) {
     await apiLogin(username, password);
-    await loadMe();
+    return loadMe();
   }
 
   function logout() {

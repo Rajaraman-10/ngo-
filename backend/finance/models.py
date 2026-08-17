@@ -5,7 +5,7 @@ from django.conf import settings
 from django.db import models
 
 
-def _next_transaction_id(model, prefix):
+def next_transaction_id(model, prefix):
     year = date.today().year
     count = model.objects.filter(transaction_id__startswith=f"NGO-{year}-{prefix}-").count() + 1
     return f"NGO-{year}-{prefix}-{count:06d}"
@@ -24,6 +24,14 @@ class Donation(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     transaction_id = models.CharField(max_length=32, unique=True, editable=False)
     source = models.CharField(max_length=20, choices=Source.choices, default=Source.INDIVIDUAL)
+    donor = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="donations",
+        help_text="Set only when a logged-in donor completes the payment flow themselves.",
+    )
     donor_name = models.CharField(max_length=255, blank=True)
     donor_email = models.EmailField(blank=True)
     display_donor_publicly = models.BooleanField(default=False)
@@ -44,7 +52,7 @@ class Donation(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.transaction_id:
-            self.transaction_id = _next_transaction_id(Donation, "DON")
+            self.transaction_id = next_transaction_id(Donation, "DON")
         super().save(*args, **kwargs)
 
     def public_donor_label(self):
@@ -93,7 +101,7 @@ class Expense(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.transaction_id:
-            self.transaction_id = _next_transaction_id(Expense, "EXP")
+            self.transaction_id = next_transaction_id(Expense, "EXP")
         super().save(*args, **kwargs)
 
     def required_approvals(self):
@@ -139,3 +147,35 @@ class Approval(models.Model):
 
     def __str__(self):
         return f"{self.approver} {self.decision} {self.expense.transaction_id}"
+
+
+class PaymentOrder(models.Model):
+    """A gateway checkout attempt. Becomes a Donation only once payment is verified."""
+
+    class Status(models.TextChoices):
+        CREATED = "created", "Created"
+        PAID = "paid", "Paid"
+        FAILED = "failed", "Failed"
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    gateway_order_id = models.CharField(max_length=100, unique=True)
+    amount = models.DecimalField(max_digits=14, decimal_places=2)
+    project = models.ForeignKey(
+        "core.Project", on_delete=models.SET_NULL, null=True, blank=True, related_name="payment_orders"
+    )
+    donor = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="payment_orders"
+    )
+    donor_name = models.CharField(max_length=255, blank=True)
+    donor_email = models.EmailField(blank=True)
+    display_donor_publicly = models.BooleanField(default=False)
+    status = models.CharField(max_length=20, choices=Status.choices, default=Status.CREATED)
+    gateway_payment_id = models.CharField(max_length=100, blank=True)
+    gateway_signature = models.CharField(max_length=255, blank=True)
+    donation = models.OneToOneField(
+        Donation, on_delete=models.SET_NULL, null=True, blank=True, related_name="payment_order"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.gateway_order_id} ({self.status})"

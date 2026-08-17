@@ -11,6 +11,7 @@ class Role(models.TextChoices):
     ACCOUNTANT = "accountant", "Accountant"
     VOLUNTEER = "volunteer", "Volunteer"
     AUDITOR = "auditor", "Auditor"
+    DONOR = "donor", "Donor"
 
 
 class User(AbstractUser):

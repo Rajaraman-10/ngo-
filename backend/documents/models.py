@@ -9,9 +9,13 @@ class Document(models.Model):
         REGISTRATION = "registration", "Registration Certificate"
         TAX = "tax", "PAN / 12A / 80G"
         ANNUAL_REPORT = "annual_report", "Annual Report"
+        MONTHLY_REPORT = "monthly_report", "Monthly Report"
+        QUARTERLY_REPORT = "quarterly_report", "Quarterly Report"
+        FUND_UTILIZATION = "fund_utilization", "Fund Utilization Report"
         AUDIT = "audit", "Audited Financial Statement"
         BUDGET = "budget", "Budget"
         PROJECT_REPORT = "project_report", "Project Report"
+        POLICY = "policy", "Policy"
         OTHER = "other", "Other"
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

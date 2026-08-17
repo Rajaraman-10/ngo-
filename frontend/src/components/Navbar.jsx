@@ -1,4 +1,4 @@
-import { NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 export default function Navbar() {
@@ -19,25 +19,27 @@ export default function Navbar() {
         <NavLink to="/" end>
           Home
         </NavLink>
-        <a href="/#about">About Us</a>
-        <a href="/#mission">Our Mission</a>
+        <NavLink to="/about">About Us</NavLink>
+        <NavLink to="/mission">Our Mission</NavLink>
         <NavLink to="/projects">Our Projects</NavLink>
+        <NavLink to="/impact">Our Impact</NavLink>
         <NavLink to="/transparency">Transparency</NavLink>
-        <a href="/#impact">Our Impact</a>
-        <a href="/#get-involved">Get Involved</a>
-        <a href="/#contact">Contact</a>
+        <NavLink to="/get-involved">Get Involved</NavLink>
+        <NavLink to="/contact">Contact</NavLink>
         {user ? (
           <>
-            <NavLink to="/dashboard">Dashboard</NavLink>
+            <NavLink to={user.role === "donor" ? "/my-impact" : "/dashboard"}>
+              {user.role === "donor" ? "My Impact" : "Dashboard"}
+            </NavLink>
             <span style={{ color: "var(--text-muted)" }}>{user.username}</span>
             <button onClick={handleLogout}>Log out</button>
           </>
         ) : (
-          <NavLink to="/login">Member Login</NavLink>
+          <NavLink to="/login">Login</NavLink>
         )}
-        <a href="/#donate" className="btn">
+        <Link to="/donate" className="btn">
           Donate Now
-        </a>
+        </Link>
       </nav>
     </header>
   );

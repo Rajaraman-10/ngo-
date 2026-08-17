@@ -39,6 +39,28 @@ class CanManageProjects(HasRole):
     allowed_roles = (Role.PROJECT_MANAGER,)
 
 
+class CanManageContent(HasRole):
+    """Missions, Activities, Impact Updates, Stories, News: project manager writes."""
+
+    allowed_roles = (Role.PROJECT_MANAGER,)
+
+
+class CanLogActivity(HasRole):
+    """Self-serve activity reports: volunteers and project managers."""
+
+    allowed_roles = (Role.VOLUNTEER, Role.PROJECT_MANAGER)
+
+
+class CanViewFinancials(HasRole):
+    """Full (non-public) financial records: anyone who legitimately needs them."""
+
+    allowed_roles = (Role.FINANCE_MANAGER, Role.ACCOUNTANT, Role.AUDITOR, Role.PROJECT_MANAGER)
+
+
+class IsDonor(HasRole):
+    allowed_roles = (Role.DONOR,)
+
+
 class IsAuditorReadOnly(BasePermission):
     def has_permission(self, request, view):
         user = request.user

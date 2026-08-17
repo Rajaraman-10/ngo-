@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 export default function Login() {
@@ -13,8 +13,8 @@ export default function Login() {
     e.preventDefault();
     setError("");
     try {
-      await login(username, password);
-      navigate("/dashboard");
+      const user = await login(username, password);
+      navigate(user?.role === "donor" ? "/my-impact" : "/dashboard");
     } catch {
       setError("Invalid username or password.");
     }
@@ -22,7 +22,7 @@ export default function Login() {
 
   return (
     <div className="container" style={{ maxWidth: 420 }}>
-      <h1>Member Login</h1>
+      <h1>Log In</h1>
       {error && <div className="error-banner">{error}</div>}
       <form onSubmit={handleSubmit} className="card">
         <div className="field" style={{ marginBottom: 14 }}>
@@ -37,6 +37,9 @@ export default function Login() {
           Log in
         </button>
       </form>
+      <p style={{ color: "var(--text-muted)", fontSize: "0.88rem" }}>
+        New donor? <Link to="/register">Create an account</Link> to track your impact automatically.
+      </p>
     </div>
   );
 }

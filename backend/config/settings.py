@@ -123,3 +123,21 @@ SIMPLE_JWT = {
 CORS_ALLOWED_ORIGINS = env.list(
     "CORS_ALLOWED_ORIGINS", default=["http://localhost:5173", "http://127.0.0.1:5173"]
 )
+
+# Payment gateway (Razorpay). Blank by default — the donate flow detects this and
+# tells the frontend honestly rather than faking a checkout. Add real (or sandbox
+# test-mode) keys here to go live: https://dashboard.razorpay.com/app/keys
+RAZORPAY_KEY_ID = env("RAZORPAY_KEY_ID", default="")
+RAZORPAY_KEY_SECRET = env("RAZORPAY_KEY_SECRET", default="")
+
+# Email. Defaults to the console backend (prints to the runserver log) since there's
+# no SMTP account configured — inquiry/newsletter code paths call send_mail for real,
+# they just have nowhere to actually deliver until EMAIL_BACKEND points at real SMTP.
+EMAIL_BACKEND = env("EMAIL_BACKEND", default="django.core.mail.backends.console.EmailBackend")
+EMAIL_HOST = env("EMAIL_HOST", default="")
+EMAIL_PORT = env.int("EMAIL_PORT", default=587)
+EMAIL_HOST_USER = env("EMAIL_HOST_USER", default="")
+EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", default="")
+EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS", default=True)
+DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default="noreply@asha-foundation.example")
+ORG_CONTACT_EMAIL = env("ORG_CONTACT_EMAIL", default="contact@asha-foundation.example")

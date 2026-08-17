@@ -19,7 +19,7 @@ export default function Footer() {
           <ul>
             {FOCUS_AREAS.map((f) => (
               <li key={f.key}>
-                <Link to={`/projects?focus=${f.key}`}>{f.label}</Link>
+                <Link to={`/mission/${f.key}`}>{f.label}</Link>
               </li>
             ))}
           </ul>
@@ -29,22 +29,25 @@ export default function Footer() {
           <h4>Quick Links</h4>
           <ul>
             <li>
-              <a href="/#about">About</a>
+              <Link to="/about">About</Link>
             </li>
             <li>
               <Link to="/projects">Projects</Link>
             </li>
             <li>
-              <a href="/#impact">Impact</a>
+              <Link to="/impact">Impact</Link>
             </li>
             <li>
               <Link to="/transparency">Transparency</Link>
             </li>
             <li>
-              <a href="/#documents">Reports</a>
+              <Link to="/news">News</Link>
             </li>
             <li>
-              <a href="/#contact">Contact</a>
+              <Link to="/stories">Stories</Link>
+            </li>
+            <li>
+              <Link to="/contact">Contact</Link>
             </li>
           </ul>
         </div>
@@ -53,13 +56,13 @@ export default function Footer() {
           <h4>Get Involved</h4>
           <ul>
             <li>
-              <a href="/#donate">Donate</a>
+              <Link to="/donate">Donate</Link>
             </li>
             <li>
-              <a href="/#get-involved">Volunteer</a>
+              <Link to="/get-involved">Volunteer</Link>
             </li>
             <li>
-              <a href="/#get-involved">Partner</a>
+              <Link to="/get-involved">Partner</Link>
             </li>
           </ul>
         </div>
@@ -80,7 +83,7 @@ export default function Footer() {
               <Link to="/my-impact">My Impact</Link>
             </li>
             <li>
-              <a href="/#documents">Annual Reports</a>
+              <Link to="/reports">Reports &amp; Documents</Link>
             </li>
           </ul>
         </div>

@@ -1,11 +1,11 @@
-from rest_framework import viewsets
+from rest_framework import generics, viewsets
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
 from .models import User
 from .permissions import IsAdmin
-from .serializers import MeSerializer, UserSerializer
+from .serializers import DonorRegisterSerializer, MeSerializer, UserSerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -23,3 +23,11 @@ class UserViewSet(viewsets.ModelViewSet):
             serializer.save()
             return Response(serializer.data)
         return Response(MeSerializer(request.user).data)
+
+
+class DonorRegisterView(generics.CreateAPIView):
+    """Public self-registration. Always creates a donor account, regardless of payload."""
+
+    queryset = User.objects.all()
+    serializer_class = DonorRegisterSerializer
+    permission_classes = [AllowAny]
