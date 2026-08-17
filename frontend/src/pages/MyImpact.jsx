@@ -126,6 +126,11 @@ export default function MyImpact() {
                 <div className="impact-row" key={c.transaction_id}>
                   <div>
                     <strong>{formatINR(c.amount)}</strong> → {c.project_name || c.purpose || "General fund"}
+                    {c.is_test && (
+                      <span className="badge pending_approval" style={{ marginLeft: 8 }}>
+                        Test
+                      </span>
+                    )}
                     <div style={{ color: "var(--text-muted)", fontSize: "0.82rem" }}>
                       {completed ? "✓ Project completed" : "⏳ Project in progress"}
                     </div>

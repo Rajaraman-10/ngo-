@@ -149,7 +149,12 @@ export default function DonationsPanel() {
                 <td className="num">{formatINR(d.amount)}</td>
                 <td>{formatDate(d.date)}</td>
                 <td>
-                  <span className={`badge ${d.status}`}>{d.status}</span>
+                  <span className={`badge ${d.status}`}>{d.status}</span>{" "}
+                  {d.is_test && (
+                    <span className="badge pending_approval" title="Created via the mock/test payment gateway">
+                      Test
+                    </span>
+                  )}
                 </td>
                 {isAdmin && (
                   <td>

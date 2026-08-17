@@ -6,7 +6,7 @@ export default function About() {
       <div className="card">
         <h2>Our Story</h2>
         <p style={{ color: "var(--text-secondary)" }}>
-          Asha Foundation started with a simple observation: the people who most need help
+          Swathi Foundation started with a simple observation: the people who most need help
           often have the least visibility into where donated money actually goes. We set out
           to build an NGO that treats transparency as infrastructure, not a promise.
         </p>

@@ -18,6 +18,7 @@ class DonationPublicSerializer(serializers.ModelSerializer):
             "project_name",
             "purpose",
             "status",
+            "is_test",
         ]
 
 
@@ -43,10 +44,20 @@ class DonationSerializer(serializers.ModelSerializer):
             "payment_reference",
             "status",
             "void_reason",
+            "is_test",
             "recorded_by",
             "created_at",
         ]
-        read_only_fields = ["id", "transaction_id", "donor", "status", "void_reason", "recorded_by", "created_at"]
+        read_only_fields = [
+            "id",
+            "transaction_id",
+            "donor",
+            "status",
+            "void_reason",
+            "is_test",
+            "recorded_by",
+            "created_at",
+        ]
 
 
 class InvoiceSerializer(serializers.ModelSerializer):

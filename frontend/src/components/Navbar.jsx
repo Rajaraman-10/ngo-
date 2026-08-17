@@ -20,7 +20,7 @@ export default function Navbar() {
   return (
     <header className="navbar">
       <NavLink to="/" className="brand" onClick={closeMenu}>
-        Asha Foundation
+        Swathi Foundation
       </NavLink>
       <button
         type="button"

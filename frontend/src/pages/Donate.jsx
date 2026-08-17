@@ -64,6 +64,20 @@ export default function Donate() {
         display_donor_publicly: displayPublicly,
       });
 
+      if (order.provider === "mock") {
+        // No real gateway configured — the backend's MockPaymentService stands in for
+        // one. There's no external checkout to open; we just ask it to confirm the
+        // order it already created, same as Razorpay's callback would.
+        try {
+          const { data: donation } = await api.post("/finance/donate/mock-confirm/", { order_id: order.order_id });
+          navigate(`/verify?tx=${donation.transaction_id}`);
+        } catch {
+          setError("Could not complete the test payment. Please try again.");
+          setSubmitting(false);
+        }
+        return;
+      }
+
       const scriptLoaded = await loadRazorpayScript();
       if (!scriptLoaded) {
         setError("Could not load the payment widget. Check your connection and try again.");
@@ -75,7 +89,7 @@ export default function Donate() {
         key: order.key_id,
         amount: order.amount,
         currency: order.currency,
-        name: "Asha Foundation",
+        name: "Swathi Foundation",
         description: "Donation",
         order_id: order.order_id,
         prefill: { name: donorName, email: donorEmail },
@@ -113,11 +127,20 @@ export default function Donate() {
         choose, and you can trace exactly where it went afterward.
       </p>
 
-      {config && !config.configured && (
+      {config && config.provider === null && (
         <div className="error-banner">
           Online payments aren't configured on this deployment yet — add Razorpay keys to
           the backend <code>.env</code> to enable checkout. This form is fully wired and will
           work as soon as keys are added.
+        </div>
+      )}
+
+      {config && config.provider === "mock" && (
+        <div className="error-banner">
+          Test mode — no Razorpay keys are configured, so this uses a simulated payment
+          gateway instead. Donations made here are real database records marked{" "}
+          <strong>is_test</strong>, kept out of the public transparency ledger and homepage
+          totals. Add Razorpay keys to the backend <code>.env</code> to accept real payments.
         </div>
       )}
 

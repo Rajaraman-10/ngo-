@@ -4,6 +4,7 @@ from rest_framework.routers import DefaultRouter
 from .views import (
     DonateConfigView,
     DonateCreateOrderView,
+    DonateMockConfirmView,
     DonateVerifyView,
     DonationViewSet,
     ExpenseViewSet,
@@ -25,4 +26,5 @@ urlpatterns = [
     path("donate/config/", DonateConfigView.as_view(), name="donate-config"),
     path("donate/create-order/", DonateCreateOrderView.as_view(), name="donate-create-order"),
     path("donate/verify/", DonateVerifyView.as_view(), name="donate-verify"),
+    path("donate/mock-confirm/", DonateMockConfirmView.as_view(), name="donate-mock-confirm"),
 ] + router.urls

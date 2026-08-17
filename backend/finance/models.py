@@ -45,6 +45,10 @@ class Donation(models.Model):
     payment_reference = models.CharField(max_length=100, blank=True)
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.RECEIVED)
     void_reason = models.TextField(blank=True)
+    is_test = models.BooleanField(
+        default=False,
+        help_text="Created via the mock/test payment gateway (dev only). Never shown in public totals or ledgers.",
+    )
     recorded_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name="donations_recorded"
     )

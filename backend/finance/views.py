@@ -1,8 +1,5 @@
-import hashlib
-import hmac
 import uuid
 
-import requests
 from django.conf import settings
 from django.db.models import Count, Sum
 from django.utils import timezone
@@ -26,6 +23,7 @@ from audit_log.services import log_action
 from core.models import Beneficiary, Project
 
 from .models import Approval, Donation, Expense, Invoice, PaymentOrder, next_transaction_id
+from .payment_service import MockPaymentService, PaymentGatewayError, RazorpayService, get_payment_service, is_mock_order_id
 from .serializers import (
     ApprovalSerializer,
     DonationPublicSerializer,
@@ -76,7 +74,7 @@ class DonationViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         qs = super().get_queryset()
         if not self._can_view_financials():
-            qs = qs.filter(status=Donation.Status.RECEIVED)
+            qs = qs.filter(status=Donation.Status.RECEIVED, is_test=False)
         project_slug = self.request.query_params.get("project")
         if project_slug:
             qs = qs.filter(project__slug=project_slug)
@@ -214,15 +212,12 @@ class TransparencySummaryView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
-        received = Donation.objects.filter(status=Donation.Status.RECEIVED).aggregate(total=Sum("amount"))[
-            "total"
-        ] or 0
+        received_qs = Donation.objects.filter(status=Donation.Status.RECEIVED, is_test=False)
+        received = received_qs.aggregate(total=Sum("amount"))["total"] or 0
         spent = Expense.objects.filter(status=Expense.Status.APPROVED).aggregate(total=Sum("amount"))["total"] or 0
         by_source = {
             row["source"]: row["total"]
-            for row in Donation.objects.filter(status=Donation.Status.RECEIVED)
-            .values("source")
-            .annotate(total=Sum("amount"))
+            for row in received_qs.values("source").annotate(total=Sum("amount"))
         }
         by_category = list(
             Expense.objects.filter(status=Expense.Status.APPROVED)
@@ -299,19 +294,67 @@ class MyDonationsView(APIView):
         return Response(results)
 
 
+def _provider_name(service):
+    return "mock" if isinstance(service, MockPaymentService) else "razorpay"
+
+
+def _finalize_paid_order(order, payment_id, signature):
+    """Shared by the real gateway callback and the mock confirm endpoint. Records
+    are_test on the resulting Donation from the order_id's mock_order_ prefix — the
+    single source of truth for which orders came from the mock gateway."""
+    is_test = is_mock_order_id(order.gateway_order_id)
+    donation = Donation.objects.create(
+        transaction_id=next_transaction_id(Donation, "DON"),
+        source=Donation.Source.INDIVIDUAL,
+        donor=order.donor,
+        donor_name=order.donor_name,
+        donor_email=order.donor_email,
+        display_donor_publicly=order.display_donor_publicly,
+        amount=order.amount,
+        date=timezone.localdate(),
+        project=order.project,
+        purpose=order.project.name if order.project else "Where Needed Most",
+        payment_method="Mock Gateway (Test)" if is_test else "Razorpay",
+        payment_reference=payment_id,
+        status=Donation.Status.RECEIVED,
+        is_test=is_test,
+    )
+    order.status = PaymentOrder.Status.PAID
+    order.gateway_payment_id = payment_id
+    order.gateway_signature = signature
+    order.donation = donation
+    order.save()
+    log_action(order.donor, "donation received via online payment", donation)
+    return donation
+
+
+def _donation_receipt(donation, order):
+    return {
+        "transaction_id": donation.transaction_id,
+        "amount": donation.amount,
+        "date": donation.date,
+        "project_name": order.project.name if order.project else None,
+        "is_test": donation.is_test,
+    }
+
+
 class DonateConfigView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
-        configured = bool(settings.RAZORPAY_KEY_ID and settings.RAZORPAY_KEY_SECRET)
-        return Response({"configured": configured, "key_id": settings.RAZORPAY_KEY_ID if configured else None})
+        service = get_payment_service()
+        if service is None:
+            return Response({"provider": None, "key_id": None})
+        provider = _provider_name(service)
+        return Response({"provider": provider, "key_id": settings.RAZORPAY_KEY_ID if provider == "razorpay" else None})
 
 
 class DonateCreateOrderView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
-        if not (settings.RAZORPAY_KEY_ID and settings.RAZORPAY_KEY_SECRET):
+        service = get_payment_service()
+        if service is None:
             return Response(
                 {"reason": "gateway_not_configured", "detail": "Online payments aren't configured yet."},
                 status=503,
@@ -344,15 +387,8 @@ class DonateCreateOrderView(APIView):
         receipt = f"donation-{uuid.uuid4().hex[:16]}"
 
         try:
-            resp = requests.post(
-                "https://api.razorpay.com/v1/orders",
-                auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET),
-                json={"amount": int(amount * 100), "currency": "INR", "receipt": receipt},
-                timeout=10,
-            )
-            resp.raise_for_status()
-            gateway_order = resp.json()
-        except requests.RequestException:
+            gateway_order = service.create_order(amount, receipt)
+        except PaymentGatewayError:
             return Response({"reason": "gateway_error", "detail": "Could not reach the payment gateway."}, status=502)
 
         order = PaymentOrder.objects.create(
@@ -364,17 +400,22 @@ class DonateCreateOrderView(APIView):
             donor_email=request.data.get("donor_email", ""),
             display_donor_publicly=bool(request.data.get("display_donor_publicly", False)),
         )
+        provider = _provider_name(service)
         return Response(
             {
                 "order_id": order.gateway_order_id,
                 "amount": gateway_order["amount"],
                 "currency": gateway_order["currency"],
-                "key_id": settings.RAZORPAY_KEY_ID,
+                "provider": provider,
+                "key_id": settings.RAZORPAY_KEY_ID if provider == "razorpay" else None,
             }
         )
 
 
 class DonateVerifyView(APIView):
+    """Called back by the real Razorpay Checkout.js widget only — never used for
+    mock/test orders, which are confirmed through DonateMockConfirmView instead."""
+
     permission_classes = [AllowAny]
 
     def post(self, request):
@@ -385,49 +426,37 @@ class DonateVerifyView(APIView):
             raise ValidationError("razorpay_order_id, razorpay_payment_id and razorpay_signature are required.")
 
         order = PaymentOrder.objects.filter(gateway_order_id=order_id, status=PaymentOrder.Status.CREATED).first()
-        if not order:
+        if not order or is_mock_order_id(order.gateway_order_id):
             return Response({"detail": "Unknown or already-processed order."}, status=404)
 
-        expected_signature = hmac.new(
-            key=settings.RAZORPAY_KEY_SECRET.encode(),
-            msg=f"{order_id}|{payment_id}".encode(),
-            digestmod=hashlib.sha256,
-        ).hexdigest()
-
-        if not hmac.compare_digest(expected_signature, signature):
+        service = get_payment_service()
+        if not isinstance(service, RazorpayService) or not service.verify_payment(order_id, payment_id, signature):
             order.status = PaymentOrder.Status.FAILED
             order.save()
             return Response({"detail": "Payment verification failed."}, status=400)
 
-        order.status = PaymentOrder.Status.PAID
-        order.gateway_payment_id = payment_id
-        order.gateway_signature = signature
-        order.save()
+        donation = _finalize_paid_order(order, payment_id, signature)
+        return Response(_donation_receipt(donation, order))
 
-        donation = Donation.objects.create(
-            transaction_id=next_transaction_id(Donation, "DON"),
-            source=Donation.Source.INDIVIDUAL,
-            donor=order.donor,
-            donor_name=order.donor_name,
-            donor_email=order.donor_email,
-            display_donor_publicly=order.display_donor_publicly,
-            amount=order.amount,
-            date=timezone.localdate(),
-            project=order.project,
-            purpose=order.project.name if order.project else "Where Needed Most",
-            payment_method="Razorpay",
-            payment_reference=payment_id,
-            status=Donation.Status.RECEIVED,
-        )
-        order.donation = donation
-        order.save()
-        log_action(order.donor, "donation received via online payment", donation)
 
-        return Response(
-            {
-                "transaction_id": donation.transaction_id,
-                "amount": donation.amount,
-                "date": donation.date,
-                "project_name": order.project.name if order.project else None,
-            }
-        )
+class DonateMockConfirmView(APIView):
+    """Stands in for the Razorpay Checkout.js popup + callback when no real gateway
+    is configured. Only ever reachable in DEBUG — see get_payment_service()."""
+
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        if not settings.DEBUG:
+            return Response({"detail": "Test payments are only available in development."}, status=403)
+
+        order_id = request.data.get("order_id")
+        order = PaymentOrder.objects.filter(gateway_order_id=order_id, status=PaymentOrder.Status.CREATED).first()
+        if not order or not is_mock_order_id(order.gateway_order_id):
+            return Response({"detail": "Unknown or already-processed test order."}, status=404)
+
+        mock = MockPaymentService()
+        payment_id = f"{mock.PAYMENT_PREFIX}{uuid.uuid4().hex[:20]}"
+        signature = mock.sign(order_id, payment_id)
+
+        donation = _finalize_paid_order(order, payment_id, signature)
+        return Response(_donation_receipt(donation, order))

@@ -116,6 +116,12 @@ export default function VerifyTransaction() {
 
       {result?.found && result.type === "donation" && (
         <div className="card impact-card">
+          {result.is_test && (
+            <div className="error-banner">
+              Test donation — made through the development mock payment gateway. No real
+              money was involved, and this record is excluded from public totals.
+            </div>
+          )}
           <h3>
             {focus ? `${focus.icon} ` : ""}Your {formatINR(result.amount)} at Work
           </h3>
