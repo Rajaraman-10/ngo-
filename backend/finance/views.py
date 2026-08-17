@@ -219,4 +219,32 @@ class VerifyTransactionView(APIView):
         ).first()
         if not donation:
             return Response({"found": False}, status=404)
-        return Response({"found": True, "type": "donation", **DonationPublicSerializer(donation).data})
+        return Response(
+            {
+                "found": True,
+                "type": "donation",
+                **DonationPublicSerializer(donation).data,
+                "project_impact": self._project_impact(donation.project),
+            }
+        )
+
+    def _project_impact(self, project):
+        if not project:
+            return None
+        target = project.target_budget
+        spent = project.funds_spent
+        progress_percent = round((spent / target) * 100, 1) if target else None
+        recent_expenses = Expense.objects.filter(project=project, status=Expense.Status.APPROVED).order_by(
+            "-date"
+        )[:5]
+        return {
+            "project_name": project.name,
+            "project_slug": project.slug,
+            "project_status": project.status,
+            "focus_area": project.focus_area,
+            "target_budget": target,
+            "funds_received": project.funds_received,
+            "funds_spent": spent,
+            "progress_percent": progress_percent,
+            "recent_expenses": ExpensePublicSerializer(recent_expenses, many=True).data,
+        }

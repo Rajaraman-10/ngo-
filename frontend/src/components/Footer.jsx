@@ -74,7 +74,10 @@ export default function Footer() {
               <Link to="/transparency">Expenses</Link>
             </li>
             <li>
-              <Link to="/verify">Verify a Transaction</Link>
+              <Link to="/verify">Track Your Contribution</Link>
+            </li>
+            <li>
+              <Link to="/my-impact">My Impact</Link>
             </li>
             <li>
               <a href="/#documents">Annual Reports</a>

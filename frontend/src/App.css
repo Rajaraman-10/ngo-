@@ -527,6 +527,24 @@ div[id] {
   color: var(--text-primary);
 }
 
+.impact-card h4 {
+  margin: 20px 0 10px;
+}
+
+.impact-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--gridline);
+  flex-wrap: wrap;
+}
+
+.impact-row:last-child {
+  border-bottom: none;
+}
+
 .site-footer-bottom {
   max-width: 1080px;
   margin: 32px auto 0;

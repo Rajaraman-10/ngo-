@@ -6,6 +6,7 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 import Dashboard from "./pages/Dashboard";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
+import MyImpact from "./pages/MyImpact";
 import Projects from "./pages/Projects";
 import Transparency from "./pages/Transparency";
 import VerifyTransaction from "./pages/VerifyTransaction";
@@ -26,6 +27,7 @@ function AppRoutes() {
         <Route path="/projects" element={<Projects />} />
         <Route path="/transparency" element={<Transparency />} />
         <Route path="/verify" element={<VerifyTransaction />} />
+        <Route path="/my-impact" element={<MyImpact />} />
         <Route path="/login" element={<Login />} />
         <Route
           path="/dashboard"

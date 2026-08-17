@@ -186,26 +186,36 @@ function RecentTransactions({ transactions }) {
   );
 }
 
-function MoneyFlow() {
+function DonationJourney() {
   return (
-    <section className="container">
+    <section className="container" id="donation-journey">
       <div className="card philosophy-card">
-        <h2>From Your Contribution to Real Impact</h2>
+        <h2>Every Rupee. Every Action. Every Impact.</h2>
+        <p style={{ color: "var(--text-secondary)", maxWidth: 640, margin: "0 auto" }}>
+          <strong>Every contribution deserves an answer.</strong> Whether you give ₹1 or
+          ₹1,00,000, you should be able to know where it went, what it provided, and what
+          changed because of it.
+        </p>
         <FlowDiagram
           steps={[
-            "Donation",
-            "Funds Received",
+            "You Donate",
+            "Receipt",
             "Project Allocation",
-            "Expense",
-            "Invoice Uploaded",
-            "Expense Approved",
-            "Publicly Recorded",
-            "Impact",
+            "Expense + Invoice Recorded",
+            "Progress Updated",
+            "You See the Impact",
           ]}
         />
-        <p style={{ color: "var(--text-secondary)", maxWidth: 640 }}>
-          Every approved expense is recorded and supported by documentation wherever applicable.
+        <p style={{ color: "var(--text-secondary)", maxWidth: 560, margin: "0 auto 8px" }}>
+          Every approved expense is recorded and supported by documentation wherever applicable —
+          look up any transaction ID to trace it yourself.
         </p>
+        <p style={{ color: "var(--text-muted)", fontSize: "0.85rem", maxWidth: 560, margin: "0 auto 20px" }}>
+          ₹1 × 10,000 people = ₹10,000. No contribution is too small to create change.
+        </p>
+        <Link to="/verify" className="btn">
+          Track Your Contribution →
+        </Link>
       </div>
     </section>
   );
@@ -548,7 +558,7 @@ export default function Home() {
       <Philosophy />
       <FinancialTransparency summary={summary} />
       <RecentTransactions transactions={transactions} />
-      <MoneyFlow />
+      <DonationJourney />
       <ProjectsPreview projects={projects} />
       <ImpactStats summary={summary} projects={projects} />
       <Stories />
