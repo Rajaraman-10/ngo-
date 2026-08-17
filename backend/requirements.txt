@@ -1,0 +1,8 @@
+Django==6.1
+djangorestframework==3.18.0
+djangorestframework-simplejwt==5.5.1
+django-cors-headers==4.9.0
+django-environ==0.14.0
+Pillow==12.3.0
+# Uncomment to use MySQL (also set USE_MYSQL=true in .env):
+# mysqlclient==2.2.4
