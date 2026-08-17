@@ -19,9 +19,13 @@ export default function Navbar() {
         <NavLink to="/" end>
           Home
         </NavLink>
-        <NavLink to="/projects">Projects</NavLink>
+        <a href="/#about">About Us</a>
+        <a href="/#mission">Our Mission</a>
+        <NavLink to="/projects">Our Projects</NavLink>
         <NavLink to="/transparency">Transparency</NavLink>
-        <NavLink to="/verify">Verify Transaction</NavLink>
+        <a href="/#impact">Our Impact</a>
+        <a href="/#get-involved">Get Involved</a>
+        <a href="/#contact">Contact</a>
         {user ? (
           <>
             <NavLink to="/dashboard">Dashboard</NavLink>
@@ -31,6 +35,9 @@ export default function Navbar() {
         ) : (
           <NavLink to="/login">Member Login</NavLink>
         )}
+        <a href="/#donate" className="btn">
+          Donate Now
+        </a>
       </nav>
     </header>
   );

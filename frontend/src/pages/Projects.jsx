@@ -1,24 +1,50 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { api } from "../api/client";
+import { FOCUS_AREAS, focusAreaLabel } from "../constants/focusAreas";
 import { formatINR } from "../utils/format";
 
 export default function Projects() {
   const [projects, setProjects] = useState([]);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const focus = searchParams.get("focus") || "";
 
   useEffect(() => {
     api.get("/core/projects/").then((res) => setProjects(res.data.results || res.data));
   }, []);
 
+  const visible = focus ? projects.filter((p) => p.focus_area === focus) : projects;
+
   return (
     <div className="container">
       <h1>Projects</h1>
-      {!projects.length && <p style={{ color: "var(--text-muted)" }}>No projects published yet.</p>}
-      {projects.map((p) => {
+
+      <div className="actions-row" style={{ marginBottom: 24 }}>
+        <button
+          className={`btn ${focus ? "secondary" : ""}`}
+          onClick={() => setSearchParams({})}
+        >
+          All
+        </button>
+        {FOCUS_AREAS.map((f) => (
+          <button
+            key={f.key}
+            className={`btn ${focus === f.key ? "" : "secondary"}`}
+            onClick={() => setSearchParams({ focus: f.key })}
+          >
+            {f.icon} {f.label}
+          </button>
+        ))}
+      </div>
+
+      {!visible.length && <p style={{ color: "var(--text-muted)" }}>No projects to show yet.</p>}
+      {visible.map((p) => {
         const pct = p.target_budget > 0 ? Math.min(100, (p.funds_spent / p.target_budget) * 100) : 0;
         return (
           <div className="card" key={p.id}>
             <h3>
-              {p.name} <span className="badge approved">{p.status}</span>
+              {p.name} <span className="badge approved">{p.status}</span>{" "}
+              <span className="badge draft">{focusAreaLabel(p.focus_area)}</span>
             </h3>
             <p style={{ color: "var(--text-secondary)" }}>{p.description}</p>
             <div className="progress-track">

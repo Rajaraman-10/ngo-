@@ -16,6 +16,7 @@ class ProjectSerializer(serializers.ModelSerializer):
             "slug",
             "description",
             "status",
+            "focus_area",
             "target_budget",
             "start_date",
             "end_date",

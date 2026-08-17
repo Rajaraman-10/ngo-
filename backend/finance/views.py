@@ -1,4 +1,4 @@
-from django.db.models import Sum
+from django.db.models import Count, Sum
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied, ValidationError
@@ -14,6 +14,7 @@ from accounts.permissions import (
     ReadOnlyOrHasRole,
 )
 from audit_log.services import log_action
+from core.models import Beneficiary
 
 from .models import Approval, Donation, Expense, Invoice
 from .serializers import (
@@ -177,6 +178,16 @@ class TransparencySummaryView(APIView):
             .annotate(total=Sum("amount"))
             .order_by("-total")
         )
+        by_focus_area = {
+            (row["project__focus_area"] or "other"): row["total"]
+            for row in Expense.objects.filter(status=Expense.Status.APPROVED)
+            .values("project__focus_area")
+            .annotate(total=Sum("amount"))
+        }
+        beneficiaries_by_focus_area = {
+            (row["project__focus_area"] or "other"): row["count"]
+            for row in Beneficiary.objects.values("project__focus_area").annotate(count=Count("id"))
+        }
         return Response(
             {
                 "total_received": received,
@@ -185,6 +196,9 @@ class TransparencySummaryView(APIView):
                 "utilization_percent": round((spent / received) * 100, 1) if received else 0,
                 "donations_by_source": by_source,
                 "expenses_by_category": by_category,
+                "expenses_by_focus_area": by_focus_area,
+                "total_beneficiaries": Beneficiary.objects.count(),
+                "beneficiaries_by_focus_area": beneficiaries_by_focus_area,
             }
         )
 

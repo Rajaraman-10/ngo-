@@ -9,11 +9,20 @@ class Project(models.Model):
         COMPLETED = "completed", "Completed"
         ON_HOLD = "on_hold", "On Hold"
 
+    class FocusArea(models.TextChoices):
+        EDUCATION = "education", "Education"
+        EMPLOYMENT = "employment", "Employment"
+        FOOD = "food", "Food"
+        HOME = "home", "Home"
+        CLEAN_INDIA = "clean_india", "Clean India"
+        OTHER = "other", "Other"
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255)
     slug = models.SlugField(unique=True)
     description = models.TextField(blank=True)
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.ACTIVE)
+    focus_area = models.CharField(max_length=20, choices=FocusArea.choices, default=FocusArea.OTHER)
     target_budget = models.DecimalField(max_digits=14, decimal_places=2, default=0)
     start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)

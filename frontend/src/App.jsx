@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import "./App.css";
+import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import Dashboard from "./pages/Dashboard";
@@ -35,7 +36,7 @@ function AppRoutes() {
           }
         />
       </Routes>
-      <footer className="footer">Asha Foundation — Transparency by default.</footer>
+      <Footer />
     </div>
   );
 }
