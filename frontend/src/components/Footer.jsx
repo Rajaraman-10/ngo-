@@ -7,7 +7,7 @@ export default function Footer() {
       <div className="site-footer-grid">
         <div>
           <div className="brand" style={{ marginBottom: 8 }}>
-            Asha Foundation
+            Swathi Foundation
           </div>
           <p style={{ color: "var(--text-muted)", fontSize: "0.88rem", maxWidth: 260 }}>
             A better life should be possible for everyone.
@@ -90,7 +90,7 @@ export default function Footer() {
       </div>
 
       <div className="site-footer-bottom">
-        <span>© {new Date().getFullYear()} Asha Foundation. All rights reserved.</span>
+        <span>© {new Date().getFullYear()} Swathi Foundation. All rights reserved.</span>
         <span className="site-footer-legal">Privacy Policy · Terms · Donation Policy</span>
       </div>
     </footer>

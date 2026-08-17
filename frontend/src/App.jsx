@@ -4,6 +4,7 @@ import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import About from "./pages/About";
+import ApplicationStatus from "./pages/ApplicationStatus";
 import Contact from "./pages/Contact";
 import Dashboard from "./pages/Dashboard";
 import Donate from "./pages/Donate";
@@ -11,7 +12,9 @@ import GetInvolved from "./pages/GetInvolved";
 import Home from "./pages/Home";
 import Impact from "./pages/Impact";
 import ImpactUpdates from "./pages/ImpactUpdates";
+import JoinSwathi from "./pages/JoinSwathi";
 import Login from "./pages/Login";
+import MemberDashboard from "./pages/MemberDashboard";
 import Mission from "./pages/Mission";
 import MissionDetail from "./pages/MissionDetail";
 import MyImpact from "./pages/MyImpact";
@@ -53,6 +56,8 @@ function AppRoutes() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/verify" element={<VerifyTransaction />} />
         <Route path="/my-impact" element={<MyImpact />} />
+        <Route path="/join" element={<JoinSwathi />} />
+        <Route path="/application-status" element={<ApplicationStatus />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route
@@ -60,6 +65,14 @@ function AppRoutes() {
           element={
             <ProtectedRoute>
               <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/member-dashboard"
+          element={
+            <ProtectedRoute>
+              <MemberDashboard />
             </ProtectedRoute>
           }
         />

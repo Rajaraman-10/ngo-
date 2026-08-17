@@ -12,6 +12,14 @@ class Role(models.TextChoices):
     VOLUNTEER = "volunteer", "Volunteer"
     AUDITOR = "auditor", "Auditor"
     DONOR = "donor", "Donor"
+    # Membership hierarchy (see the `membership` app) — location-scoped admin tiers.
+    # A tier alone doesn't say *which* country/state/region; that's `membership.AdminScope`.
+    GLOBAL_ADMIN = "global_admin", "Global Admin"
+    COUNTRY_ADMIN = "country_admin", "Country Admin"
+    STATE_ADMIN = "state_admin", "State/Province Admin"
+    REGIONAL_ADMIN = "regional_admin", "Regional Admin"
+    TEAM_LEAD = "team_lead", "Team Lead"
+    MEMBER = "member", "Member"
 
 
 class User(AbstractUser):

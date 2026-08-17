@@ -1,0 +1,7 @@
+{% extends "membership/emails/_base.html" %}
+{% block body %}
+<h2 style="margin-top:0;">You've been shortlisted</h2>
+<p>Good news, {{ application.full_name }} — your application
+(<strong>{{ application.application_id }}</strong>) has been shortlisted by the
+{{ application.region.name }} team. We'll reach out soon with the next step.</p>
+{% endblock %}

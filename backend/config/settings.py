@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     "finance",
     "audit_log",
     "documents",
+    "membership",
 ]
 
 MIDDLEWARE = [
@@ -142,5 +143,9 @@ EMAIL_PORT = env.int("EMAIL_PORT", default=587)
 EMAIL_HOST_USER = env("EMAIL_HOST_USER", default="")
 EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", default="")
 EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS", default=True)
-DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default="noreply@asha-foundation.example")
-ORG_CONTACT_EMAIL = env("ORG_CONTACT_EMAIL", default="contact@asha-foundation.example")
+DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default="noreply@Swathi-foundation.example")
+ORG_CONTACT_EMAIL = env("ORG_CONTACT_EMAIL", default="contact@Swathi-foundation.example")
+
+# Used only to build the "review this application" link inside admin notification
+# emails — Django has no other way to know the deployed frontend's origin.
+FRONTEND_BASE_URL = env("FRONTEND_BASE_URL", default="http://localhost:5173")

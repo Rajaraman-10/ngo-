@@ -24,17 +24,17 @@ export default function Contact() {
           <p>
             <strong>Address</strong>
             <br />
-            123 Example Street, Chennai, Tamil Nadu, India
+            Zive men's PG 44, NSK nagar, CHIL SEZ IT Park, Saravanampatti, Keeranatham, Tamil Nadu 641035
           </p>
           <p>
             <strong>Phone</strong>
             <br />
-            +91 00000 00000
+            +91 6382725495
           </p>
           <p>
             <strong>Email</strong>
             <br />
-            contact@ashafoundation.org
+            contact@Swathifoundation.org
           </p>
           <div className="social-row">
             <span>Instagram</span>

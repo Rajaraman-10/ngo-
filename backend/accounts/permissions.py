@@ -18,7 +18,9 @@ class HasRole(BasePermission):
 
 
 class IsAdmin(HasRole):
-    allowed_roles = ()
+    # GLOBAL_ADMIN needs this to manage regional administrators (assign AdminScope
+    # rows) via the existing UserViewSet — see membership/permissions.py.
+    allowed_roles = (Role.GLOBAL_ADMIN,)
 
 
 class CanManageExpenses(HasRole):

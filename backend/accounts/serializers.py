@@ -44,8 +44,8 @@ class UserSerializer(serializers.ModelSerializer):
 class MeSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["id", "username", "email", "first_name", "last_name", "phone", "role"]
-        read_only_fields = ["id", "role"]
+        fields = ["id", "username", "email", "first_name", "last_name", "phone", "role", "is_superuser"]
+        read_only_fields = ["id", "role", "is_superuser"]
 
 
 class DonorRegisterSerializer(serializers.ModelSerializer):

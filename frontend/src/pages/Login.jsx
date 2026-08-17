@@ -14,7 +14,9 @@ export default function Login() {
     setError("");
     try {
       const user = await login(username, password);
-      navigate(user?.role === "donor" ? "/my-impact" : "/dashboard");
+      if (user?.role === "donor") navigate("/my-impact");
+      else if (user?.role === "member") navigate("/member-dashboard");
+      else navigate("/dashboard");
     } catch {
       setError("Invalid username or password.");
     }

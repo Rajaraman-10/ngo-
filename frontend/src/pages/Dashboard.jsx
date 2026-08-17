@@ -1,17 +1,22 @@
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import ActivitiesPanel from "./dashboard/ActivitiesPanel";
+import AdminsPanel from "./dashboard/AdminsPanel";
+import ApplicationsPanel from "./dashboard/ApplicationsPanel";
 import AuditLogPanel from "./dashboard/AuditLogPanel";
 import DonationsPanel from "./dashboard/DonationsPanel";
 import ExpensesPanel from "./dashboard/ExpensesPanel";
 import ImpactUpdatesPanel from "./dashboard/ImpactUpdatesPanel";
 import InquiriesPanel from "./dashboard/InquiriesPanel";
 import MembersPanel from "./dashboard/MembersPanel";
+import OrganizationPanel from "./dashboard/OrganizationPanel";
 import ProjectsPanel from "./dashboard/ProjectsPanel";
+import RegionalNeedsPanel from "./dashboard/RegionalNeedsPanel";
 import StoriesPanel from "./dashboard/StoriesPanel";
 
 const FINANCIAL_ROLES = ["finance_manager", "accountant", "project_manager", "auditor", "admin"];
 const CONTENT_ROLES = ["project_manager", "admin"];
+const MEMBERSHIP_ADMIN_ROLES = ["global_admin", "country_admin", "state_admin", "regional_admin", "team_lead", "admin"];
 
 const TAB_CONFIG = [
   { key: "expenses", label: "Expenses", Component: ExpensesPanel, roles: FINANCIAL_ROLES },
@@ -23,6 +28,10 @@ const TAB_CONFIG = [
   { key: "inquiries", label: "Inquiries", Component: InquiriesPanel, roles: ["admin"] },
   { key: "members", label: "Members", Component: MembersPanel, roles: ["admin"] },
   { key: "audit-log", label: "Audit Log", Component: AuditLogPanel, roles: ["admin", "auditor"] },
+  { key: "applications", label: "Swathi Applications", Component: ApplicationsPanel, roles: MEMBERSHIP_ADMIN_ROLES },
+  { key: "regional-needs", label: "Regional Needs", Component: RegionalNeedsPanel, roles: MEMBERSHIP_ADMIN_ROLES },
+  { key: "organization", label: "Organization", Component: OrganizationPanel, roles: ["global_admin", "admin"] },
+  { key: "admins", label: "Admins & Permissions", Component: AdminsPanel, roles: ["global_admin", "admin"] },
 ];
 
 export default function Dashboard() {

@@ -1,0 +1,12 @@
+{% extends "membership/emails/_base.html" %}
+{% block body %}
+<h2 style="margin-top:0;">A quick conversation, next</h2>
+<p>Hi {{ application.full_name }}, the {{ application.region.name }} team would like to
+speak with you as the next step for application
+<strong>{{ application.application_id }}</strong>.</p>
+{% if note %}
+<p style="background:#f3efe4; padding:12px 16px; border-radius:8px;">{{ note }}</p>
+{% else %}
+<p>Someone from the regional team will contact you directly to schedule this.</p>
+{% endif %}
+{% endblock %}

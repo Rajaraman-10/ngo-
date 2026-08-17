@@ -1,0 +1,15 @@
+{% extends "membership/emails/_base.html" %}
+{% block body %}
+<h2 style="margin-top:0;">Welcome to Swathi, {{ application.full_name }}!</h2>
+<p>Your application (<strong>{{ application.application_id }}</strong>) has been approved
+and you're now a Swathi member in {{ application.region.name }}.</p>
+{% if member_id %}
+<table role="presentation" style="width:100%; margin:16px 0; font-size:14px;">
+  <tr><td style="color:#57554a; padding:4px 0;">Member ID</td><td style="font-weight:bold;">{{ member_id }}</td></tr>
+  <tr><td style="color:#57554a; padding:4px 0;">Role</td><td>{{ role_name }}</td></tr>
+</table>
+{% endif %}
+<p>You can now log in and see your Swathi Member Dashboard, with your role, team, and
+upcoming activity. We're glad you're here — meaningful change begins with people like
+you taking action.</p>
+{% endblock %}

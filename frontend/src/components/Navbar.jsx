@@ -53,13 +53,19 @@ export default function Navbar() {
         <NavLink to="/get-involved" onClick={closeMenu}>
           Get Involved
         </NavLink>
+        <NavLink to="/join" onClick={closeMenu}>
+          Join Swathi
+        </NavLink>
         <NavLink to="/contact" onClick={closeMenu}>
           Contact
         </NavLink>
         {user ? (
           <>
-            <NavLink to={user.role === "donor" ? "/my-impact" : "/dashboard"} onClick={closeMenu}>
-              {user.role === "donor" ? "My Impact" : "Dashboard"}
+            <NavLink
+              to={user.role === "donor" ? "/my-impact" : user.role === "member" ? "/member-dashboard" : "/dashboard"}
+              onClick={closeMenu}
+            >
+              {user.role === "donor" ? "My Impact" : user.role === "member" ? "My Swathi" : "Dashboard"}
             </NavLink>
             <span style={{ color: "var(--text-muted)" }}>{user.username}</span>
             <button onClick={handleLogout}>Log out</button>

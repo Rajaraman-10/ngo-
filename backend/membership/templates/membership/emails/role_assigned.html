@@ -1,0 +1,11 @@
+{% extends "membership/emails/_base.html" %}
+{% block body %}
+<h2 style="margin-top:0;">A role has been assigned</h2>
+<p>Hi {{ application.full_name }}, based on your application
+(<strong>{{ application.application_id }}</strong>) and the {{ application.region.name }}
+team's current needs, you've been assigned as:</p>
+<p style="font-size:18px; font-weight:bold; color:#1f6b47;">{{ role_name }}</p>
+{% if team_name %}<p>Team: {{ team_name }}</p>{% endif %}
+{% if department_name %}<p>Department: {{ department_name }}</p>{% endif %}
+<p>A final approval will follow shortly.</p>
+{% endblock %}

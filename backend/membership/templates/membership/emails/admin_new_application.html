@@ -1,0 +1,15 @@
+{% extends "membership/emails/_base.html" %}
+{% block body %}
+<h2 style="margin-top:0;">New membership application</h2>
+<p>A new application was submitted for <strong>{{ application.region.name }}</strong>.</p>
+<table role="presentation" style="width:100%; margin:16px 0; font-size:14px;">
+  <tr><td style="color:#57554a; padding:4px 0;">Applicant</td><td>{{ application.full_name }}</td></tr>
+  <tr><td style="color:#57554a; padding:4px 0;">Email</td><td>{{ application.email }}</td></tr>
+  <tr><td style="color:#57554a; padding:4px 0;">Region</td><td>{{ application.region.name }}</td></tr>
+  <tr><td style="color:#57554a; padding:4px 0;">Skills</td><td>{{ skills_summary }}</td></tr>
+  <tr><td style="color:#57554a; padding:4px 0;">Experience</td><td>{{ application.years_of_experience }} years</td></tr>
+  <tr><td style="color:#57554a; padding:4px 0;">Availability</td><td>{{ application.hours_per_week|default:"—" }} hrs/week</td></tr>
+  <tr><td style="color:#57554a; padding:4px 0;">Application ID</td><td style="font-weight:bold;">{{ application.application_id }}</td></tr>
+</table>
+<p><a href="{{ review_url }}" style="background:#1f6b47; color:#ffffff; padding:10px 20px; border-radius:999px; text-decoration:none;">Review Application</a></p>
+{% endblock %}

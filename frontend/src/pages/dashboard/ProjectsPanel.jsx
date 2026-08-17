@@ -22,6 +22,8 @@ export default function ProjectsPanel() {
   const { user } = useAuth();
   const [projects, setProjects] = useState([]);
   const [form, setForm] = useState(emptyForm);
+  const [coverImage, setCoverImage] = useState(null);
+  const [fileKey, setFileKey] = useState(0);
   const [error, setError] = useState("");
   const canManage = CAN_MANAGE.includes(user?.role) || user?.is_superuser;
 
@@ -46,14 +48,22 @@ export default function ProjectsPanel() {
     e.preventDefault();
     setError("");
     try {
-      await api.post("/core/projects/", {
+      const fd = new FormData();
+      const payload = {
         ...form,
         slug: form.slug || slugify(form.name),
         target_budget: Number(form.target_budget) || 0,
-        start_date: form.start_date || null,
-        end_date: form.end_date || null,
+      };
+      Object.entries(payload).forEach(([k, v]) => {
+        if (v !== "" && v !== null && v !== undefined) fd.append(k, v);
+      });
+      if (coverImage) fd.append("cover_image", coverImage);
+      await api.post("/core/projects/", fd, {
+        headers: { "Content-Type": "multipart/form-data" },
       });
       setForm(emptyForm);
+      setCoverImage(null);
+      setFileKey((k) => k + 1);
       refresh();
     } catch (err) {
       setError(err.response?.data?.slug?.[0] || "Could not create project. Check required fields.");
@@ -120,6 +130,15 @@ export default function ProjectsPanel() {
                 onChange={(e) => setForm({ ...form, end_date: e.target.value })}
               />
             </div>
+            <div className="field">
+              <label>Project photo</label>
+              <input
+                key={fileKey}
+                type="file"
+                accept="image/*"
+                onChange={(e) => setCoverImage(e.target.files[0])}
+              />
+            </div>
           </div>
           <div className="field" style={{ marginBottom: 14 }}>
             <label>Description</label>
@@ -136,6 +155,7 @@ export default function ProjectsPanel() {
         <table>
           <thead>
             <tr>
+              <th>Photo</th>
               <th>Name</th>
               <th>Mission</th>
               <th>Status</th>
@@ -147,6 +167,17 @@ export default function ProjectsPanel() {
           <tbody>
             {projects.map((p) => (
               <tr key={p.id}>
+                <td>
+                  {p.cover_image ? (
+                    <img
+                      src={p.cover_image}
+                      alt=""
+                      style={{ width: 44, height: 44, objectFit: "cover", borderRadius: 6 }}
+                    />
+                  ) : (
+                    <span style={{ color: "var(--text-muted)" }}>—</span>
+                  )}
+                </td>
                 <td>{p.name}</td>
                 <td>{p.focus_area}</td>
                 <td>
@@ -163,7 +194,7 @@ export default function ProjectsPanel() {
             ))}
             {!projects.length && (
               <tr>
-                <td colSpan={6} style={{ color: "var(--text-muted)" }}>
+                <td colSpan={7} style={{ color: "var(--text-muted)" }}>
                   No projects yet.
                 </td>
               </tr>
