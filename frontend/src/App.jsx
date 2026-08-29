@@ -12,7 +12,7 @@ import GetInvolved from "./pages/GetInvolved";
 import Home from "./pages/Home";
 import Impact from "./pages/Impact";
 import ImpactUpdates from "./pages/ImpactUpdates";
-import JoinSwathi from "./pages/JoinSwathi";
+import Joinamma from "./pages/JoinSwathi";
 import Login from "./pages/Login";
 import MemberDashboard from "./pages/MemberDashboard";
 import Mission from "./pages/Mission";
@@ -56,7 +56,7 @@ function AppRoutes() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/verify" element={<VerifyTransaction />} />
         <Route path="/my-impact" element={<MyImpact />} />
-        <Route path="/join" element={<JoinSwathi />} />
+        <Route path="/join" element={<Joinamma />} />
         <Route path="/application-status" element={<ApplicationStatus />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />

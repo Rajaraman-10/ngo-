@@ -6,9 +6,9 @@ const PROCESS_STEPS = [
   { n: "01", label: "Choose your region" },
   { n: "02", label: "Tell us about yourself" },
   { n: "03", label: "Submit your application" },
-  { n: "04", label: "Swathi reviews your application" },
+  { n: "04", label: "amma reviews your application" },
   { n: "05", label: "We find where your contribution can create the most impact" },
-  { n: "06", label: "Join your regional Swathi team" },
+  { n: "06", label: "Join your regional amma team" },
 ];
 
 const emptyForm = {
@@ -42,7 +42,7 @@ const emptyForm = {
   linkedin_url: "",
 };
 
-export default function JoinSwathi() {
+export default function Joinamma() {
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
   const [regions, setRegions] = useState([]);
@@ -117,7 +117,7 @@ export default function JoinSwathi() {
           <h1>Thank you, {result.full_name}.</h1>
           <p style={{ color: "var(--text-secondary)" }}>
             Your application has been received. Your regional team will review it against
-            what Swathi currently needs, and we'll follow up with next steps.
+            what amma currently needs, and we'll follow up with next steps.
           </p>
           <p style={{ fontSize: "1.3rem", fontWeight: 700, color: "var(--brand)", margin: "20px 0" }}>
             {result.application_id}
@@ -135,9 +135,9 @@ export default function JoinSwathi() {
 
   return (
     <div className="container" style={{ maxWidth: 720 }}>
-      <h1>Join Swathi</h1>
+      <h1>Join amma</h1>
       <p style={{ color: "var(--text-secondary)" }}>
-        Swathi is growing through people who believe that meaningful change begins with
+        amma is growing through people who believe that meaningful change begins with
         action. This isn't a job application — it's the start of your part in service,
         community, and impact.
       </p>
@@ -309,9 +309,9 @@ export default function JoinSwathi() {
           ))}
         </div>
 
-        <h3>Why Swathi?</h3>
+        <h3>Why amma?</h3>
         <div className="field" style={{ marginBottom: 14 }}>
-          <label>Why do you want to join Swathi?</label>
+          <label>Why do you want to join amma?</label>
           <textarea rows={3} value={form.motivation} onChange={(e) => set("motivation", e.target.value)} required />
         </div>
         <div className="field" style={{ marginBottom: 14 }}>

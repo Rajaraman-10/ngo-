@@ -28,7 +28,7 @@ const TAB_CONFIG = [
   { key: "inquiries", label: "Inquiries", Component: InquiriesPanel, roles: ["admin"] },
   { key: "members", label: "Members", Component: MembersPanel, roles: ["admin"] },
   { key: "audit-log", label: "Audit Log", Component: AuditLogPanel, roles: ["admin", "auditor"] },
-  { key: "applications", label: "Swathi Applications", Component: ApplicationsPanel, roles: MEMBERSHIP_ADMIN_ROLES },
+  { key: "applications", label: "amma Applications", Component: ApplicationsPanel, roles: MEMBERSHIP_ADMIN_ROLES },
   { key: "regional-needs", label: "Regional Needs", Component: RegionalNeedsPanel, roles: MEMBERSHIP_ADMIN_ROLES },
   { key: "organization", label: "Organization", Component: OrganizationPanel, roles: ["global_admin", "admin"] },
   { key: "admins", label: "Admins & Permissions", Component: AdminsPanel, roles: ["global_admin", "admin"] },

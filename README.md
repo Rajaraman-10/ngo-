@@ -25,8 +25,9 @@ python manage.py createsuperuser
 python manage.py runserver
 ```
 
-Defaults to SQLite. To use MySQL, set `USE_MYSQL=true` and the `DB_*` vars in
-`.env`, and `pip install mysqlclient`.
+DB priority: `DATABASE_URL` (Render Postgres or any managed DB) > `USE_MYSQL=true`
+with `DB_*` vars (self-hosted MySQL, needs `pip install mysqlclient`) > SQLite
+for local dev with neither set.
 
 Roles (`accounts.Role`): `admin`, `finance_manager`, `project_manager`,
 `accountant`, `volunteer`, `auditor`, `donor`. Admins bypass all role checks.
@@ -84,6 +85,24 @@ the old localStorage-only guest tracker when logged in), staff land on
 `/dashboard`, where visible tabs depend on role (Expenses/Donations for
 finance roles, Projects/Activities/Impact Updates/Stories for project
 managers and volunteers, Members/Inquiries/Audit Log for admins).
+
+## Deployment
+
+Backend on Render, frontend on Vercel.
+
+- **Backend (Render):** set `DATABASE_URL` (auto-populated if you attach a
+  Render Postgres instance) so it isn't running on ephemeral SQLite. Build
+  command should run `migrate` and then `bootstrap_admin` (idempotent —
+  creates/updates the admin superuser from `ADMIN_USERNAME` / `ADMIN_EMAIL` /
+  `ADMIN_PASSWORD` env vars), since Render's free plan has no Shell access to
+  run `createsuperuser` interactively:
+  ```bash
+  python manage.py migrate && python manage.py bootstrap_admin
+  ```
+- **Frontend (Vercel):** point it at `frontend/`, set `VITE_API_BASE` to the
+  deployed backend's `/api` URL (defaults to `http://127.0.0.1:8000/api` for
+  local dev). A no-op commit (e.g. bumping the version in `package.json`) is a
+  quick way to force a fresh deploy if Vercel's cache is stale.
 
 ## API surface
 

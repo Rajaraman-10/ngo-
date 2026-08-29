@@ -45,7 +45,7 @@ function AboutUs() {
       <div className="card">
         <h2>About Us</h2>
         <p style={{ color: "var(--text-secondary)" }}>
-          Swathi Foundation runs education, employment, food-security, housing and sanitation
+          amma Foundation runs education, employment, food-security, housing and sanitation
           programs for underserved communities — funded entirely by public donations and grants,
           and published in full on this website.
         </p>

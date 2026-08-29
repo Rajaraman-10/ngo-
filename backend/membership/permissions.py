@@ -11,7 +11,7 @@ ADMIN_TIERS = (
 
 
 class IsMembershipAdmin(HasRole):
-    """Any tier in the Swathi admin hierarchy — location scoping is enforced separately
+    """Any tier in the amma admin hierarchy — location scoping is enforced separately
     by HasRegionalAccess/user_can_access_region, not by this class."""
 
     allowed_roles = ADMIN_TIERS

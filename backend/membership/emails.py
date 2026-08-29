@@ -20,14 +20,14 @@ from .models import EmailNotification
 logger = logging.getLogger(__name__)
 
 SUBJECTS = {
-    "application_received": "Swathi Application Received — {application_id}",
-    "application_under_review": "Your Swathi Application Is Under Review — {application_id}",
+    "application_received": "amma Application Received — {application_id}",
+    "application_under_review": "Your amma Application Is Under Review — {application_id}",
     "application_shortlisted": "You've Been Shortlisted — {application_id}",
     "interview_required": "Next Step: Interview/Discussion — {application_id}",
-    "role_assigned": "Your Swathi Role Assignment — {application_id}",
-    "application_approved": "Welcome to Swathi! — {application_id}",
-    "application_rejected": "Update on Your Swathi Application — {application_id}",
-    "admin_new_application": "New Swathi Membership Application — {application_id}",
+    "role_assigned": "Your amma Role Assignment — {application_id}",
+    "application_approved": "Welcome to amma! — {application_id}",
+    "application_rejected": "Update on Your amma Application — {application_id}",
+    "admin_new_application": "New amma Membership Application — {application_id}",
 }
 
 

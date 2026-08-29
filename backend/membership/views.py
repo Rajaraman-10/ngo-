@@ -416,7 +416,7 @@ class MembershipApplicationViewSet(viewsets.ModelViewSet):
 
 
 class ApplicationStatusView(APIView):
-    """Public lookup by application_id + email — the only way anyone outside Swathi
+    """Public lookup by application_id + email — the only way anyone outside amma
     admin can see an application's status. Mirrors VerifyTransactionView's shape."""
 
     permission_classes = [AllowAny]
@@ -537,7 +537,7 @@ NON_ADMIN_ROLES = (Role.DONOR, Role.VOLUNTEER, Role.MEMBER)
 
 class AdminsOverviewView(APIView):
     """Founder/global-admin visibility: every account with any edit power, plus the
-    region/state/country each Swathi-tier admin is actually scoped to. Stays readable
+    region/state/country each amma-tier admin is actually scoped to. Stays readable
     at any account count since it only ever lists the (small, deliberate) admin set,
     never the full user table."""
 

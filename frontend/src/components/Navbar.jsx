@@ -20,7 +20,7 @@ export default function Navbar() {
   return (
     <header className="navbar">
       <NavLink to="/" className="brand" onClick={closeMenu}>
-        Swathi Foundation
+        amma Foundation
       </NavLink>
       <button
         type="button"
@@ -54,7 +54,7 @@ export default function Navbar() {
           Get Involved
         </NavLink>
         <NavLink to="/join" onClick={closeMenu}>
-          Join Swathi
+          Join amma
         </NavLink>
         <NavLink to="/contact" onClick={closeMenu}>
           Contact
@@ -65,7 +65,7 @@ export default function Navbar() {
               to={user.role === "donor" ? "/my-impact" : user.role === "member" ? "/member-dashboard" : "/dashboard"}
               onClick={closeMenu}
             >
-              {user.role === "donor" ? "My Impact" : user.role === "member" ? "My Swathi" : "Dashboard"}
+              {user.role === "donor" ? "My Impact" : user.role === "member" ? "My amma" : "Dashboard"}
             </NavLink>
             <span style={{ color: "var(--text-muted)" }}>{user.username}</span>
             <button onClick={handleLogout}>Log out</button>

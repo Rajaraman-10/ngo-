@@ -34,7 +34,7 @@ export default function Contact() {
           <p>
             <strong>Email</strong>
             <br />
-            contact@Swathifoundation.org
+            contact@ammafoundation.org
           </p>
           <div className="social-row">
             <span>Instagram</span>

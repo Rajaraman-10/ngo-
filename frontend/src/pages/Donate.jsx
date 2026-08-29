@@ -89,7 +89,7 @@ export default function Donate() {
         key: order.key_id,
         amount: order.amount,
         currency: order.currency,
-        name: "Swathi Foundation",
+        name: "amma Foundation",
         description: "Donation",
         order_id: order.order_id,
         prefill: { name: donorName, email: donorEmail },

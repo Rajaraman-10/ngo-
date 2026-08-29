@@ -6,16 +6,16 @@ from django.db import models
 
 
 def next_application_id():
-    """Same convention as finance.models.next_transaction_id: Swathi-{year}-{seq:06d}."""
+    """Same convention as finance.models.next_transaction_id: amma-{year}-{seq:06d}."""
     year = date.today().year
-    count = MembershipApplication.objects.filter(application_id__startswith=f"Swathi-{year}-").count() + 1
-    return f"Swathi-{year}-{count:06d}"
+    count = MembershipApplication.objects.filter(application_id__startswith=f"amma-{year}-").count() + 1
+    return f"amma-{year}-{count:06d}"
 
 
 def next_member_id(country_code, region_code):
-    """Swathi-M-<COUNTRY>-<REGION>-NNNNN. Country/region codes come from the DB, never
+    """amma-M-<COUNTRY>-<REGION>-NNNNN. Country/region codes come from the DB, never
     hardcoded — this function only formats whatever codes the region hierarchy has."""
-    prefix = f"Swathi-M-{country_code}-{region_code}-"
+    prefix = f"amma-M-{country_code}-{region_code}-"
     count = Member.objects.filter(member_id__startswith=prefix).count() + 1
     return f"{prefix}{count:05d}"
 

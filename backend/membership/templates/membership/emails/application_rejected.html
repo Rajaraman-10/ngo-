@@ -1,11 +1,11 @@
 {% extends "membership/emails/_base.html" %}
 {% block body %}
 <h2 style="margin-top:0;">An update on your application</h2>
-<p>Hi {{ application.full_name }}, thank you for your interest in Swathi and for the time
+<p>Hi {{ application.full_name }}, thank you for your interest in amma and for the time
 you put into your application (<strong>{{ application.application_id }}</strong>).</p>
 <p>After review, the {{ application.region.name }} team isn't able to move forward with
 your application at this time{% if note %} — {{ note }}{% endif %}. This isn't a
 reflection of your abilities; regional needs and openings change, and we'd welcome you
 to apply again in the future.</p>
-<p>Thank you again for wanting to be part of Swathi.</p>
+<p>Thank you again for wanting to be part of amma.</p>
 {% endblock %}

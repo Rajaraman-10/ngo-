@@ -10,7 +10,7 @@ export default function MemberDashboard() {
     api
       .get("/membership/my-member-profile/")
       .then((res) => setMember(res.data))
-      .catch(() => setError("No Swathi member profile is linked to this account yet."));
+      .catch(() => setError("No amma member profile is linked to this account yet."));
   }, []);
 
   if (error) {
@@ -28,7 +28,7 @@ export default function MemberDashboard() {
     <div className="container">
       <h1>Welcome, {member.full_name}</h1>
       <p style={{ color: "var(--text-secondary)" }}>
-        Swathi {member.region_name} · Member ID <strong>{member.member_id}</strong>
+        amma {member.region_name} · Member ID <strong>{member.member_id}</strong>
       </p>
 
       <div className="stat-grid">

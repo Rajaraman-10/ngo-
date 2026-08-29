@@ -18,9 +18,9 @@ export default function AdminsPanel() {
       <div className="card">
         <h3>Who can make changes on this site</h3>
         <p style={{ color: "var(--text-muted)", fontSize: "0.85rem" }}>
-          Every account with any edit power — donors, volunteers, and regular Swathi
+          Every account with any edit power — donors, volunteers, and regular amma
           members are left out since they have no write access beyond their own data.
-          Region-scoped Swathi admins show the exact area they're limited to.
+          Region-scoped amma admins show the exact area they're limited to.
         </p>
         {error && <div className="error-banner">{error}</div>}
         <table>

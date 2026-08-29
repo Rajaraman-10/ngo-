@@ -54,7 +54,7 @@ export default function ApplicationStatus() {
             <input
               value={applicationId}
               onChange={(e) => setApplicationId(e.target.value)}
-              placeholder="e.g. Swathi-2026-000001"
+              placeholder="e.g. amma-2026-000001"
               required
             />
           </div>
